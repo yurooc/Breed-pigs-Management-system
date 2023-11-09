@@ -1,0 +1,283 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>信息预览</title>
+     <link rel="stylesheet" href="{% static 'animal/css/bootstrap.min.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">种猪信息可视化</a>
+    </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/">返回首页</a></li>
+          </ul>
+  </div>
+</nav>
+
+<div class="panel panel-default">
+  <div class="panel-heading">实时种猪数量</div>
+  <div class="panel-body">
+    <div id="m1" style="width:100%;height:300px;">
+
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-8">
+    <div class="panel panel-default">
+  <div class="panel-heading">猪舍分布</div>
+  <div class="panel-body">
+     <div id="m2" style="width: 100%;height: 400px;">
+  </div>
+  </div>
+</div>
+  </div>
+  <div class="col-sm-4">
+    <div class="panel panel-default">
+  <div class="panel-heading">种猪比例</div>
+  <div class="panel-body">
+    <div id="m3" style="width: 100%; height: 400px;">
+  </div>
+</div>
+  </div>
+</div>
+
+</div>
+
+<script src="{% static 'animal/js/bootstrap.min.js'%}"></script>
+
+{% block js %}
+<script src="{% static 'animal/js/echarts.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script type="text/javascript">
+      $(function()  {
+           initBar();
+           initPie();
+           initGauge();
+      })
+
+       <!-- m2-->
+      function initBar(){
+      var myChart = echarts.init(document.getElementById('m2'));
+      // 指定图表的配置项和数据
+      var option = {
+        title: {
+          text: '猪舍分布'
+        },
+        tooltip: {},
+        legend: {
+          data: [],
+          bottom:0
+
+        },
+        xAxis: {
+          data: []
+        },
+        yAxis: {},
+        series: []
+      };
+      $.ajax({
+      url:"/chartbar/",
+      type:"get",
+      dataType:"JSON",
+      success: function(res) {
+            if(res.status){
+                option.legend.data = res.data.legend;
+                option.xAxis.data = res.data.x_axis;
+                option.series = res.data.series_list;
+// 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+      }
+
+      }
+      })
+
+      }
+
+
+
+ <!-- m3-->
+      function initPie(){
+var chartDom = document.getElementById('m3');
+var myChart = echarts.init(chartDom);
+var option;
+
+option = {
+  tooltip: {
+    trigger: 'item'
+  },
+  legend: {
+    top: '5%',
+    left: 'center'
+  },
+  series: [
+    {
+      name: '数量',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      itemStyle: {
+        borderRadius: 10,
+        borderColor: '#fff',
+        borderWidth: 2
+      },
+      label: {
+        show: false,
+        position: 'center'
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '40',
+          fontWeight: 'bold'
+        }
+      },
+      labelLine: {
+        show: false
+      },
+      data: [
+
+
+
+      ]
+    }
+  ]
+};
+$.ajax({
+      url:"/chartbing/",
+      type:"get",
+      dataType:"JSON",
+      success: function(res) {
+            if(res.status){
+                option.series[0].data = res.data;
+// 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+      }
+
+      }
+      })
+
+      }
+
+
+
+
+
+
+
+
+ function initGauge(){
+var chartDom = document.getElementById('m1');
+var myChart = echarts.init(chartDom);
+var option;
+
+option = {
+  series: [
+    {
+      type: 'gauge',
+      startAngle: 180,
+      endAngle: 0,
+      min: 0,
+      max: 200,
+      splitNumber: 8,
+      axisLine: {
+        lineStyle: {
+          width: 6,
+          color: [
+            [0.25, '#FF6E76'],
+            [0.5, '#FDDD60'],
+            [0.75, '#58D9F9'],
+            [1, '#7CFFB2']
+          ]
+        }
+      },
+      pointer: {
+        icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
+        length: '12%',
+        width: 20,
+        offsetCenter: [0, '-60%'],
+        itemStyle: {
+          color: 'auto'
+        }
+      },
+      axisTick: {
+        length: 12,
+        lineStyle: {
+          color: 'auto',
+          width: 2
+        }
+      },
+      splitLine: {
+        length: 20,
+        lineStyle: {
+          color: 'auto',
+          width: 5
+        }
+      },
+      axisLabel: {
+        color: '#464646',
+        fontSize: 20,
+        distance: -60,
+        formatter: function (value) {
+          if (value === 50) {
+            return '50';
+          } else if (value === 100) {
+            return '100';
+          } else if (value === 150) {
+            return '150';
+          } else if (value === 200) {
+            return '200';
+          }
+          return '';
+        }
+      },
+      title: {
+        offsetCenter: [0, '-20%'],
+        fontSize: 20
+      },
+      detail: {
+        fontSize: 30,
+        offsetCenter: [0, '20%'],
+        valueAnimation: true,
+        formatter: function (value) {
+          return Math.round(value) + '只';
+        },
+        color: 'auto'
+      },
+      data: [
+
+      ]
+    }
+  ]
+};
+
+$.ajax({
+      url:"/chartzong/",
+      type:"get",
+      dataType:"JSON",
+      success: function(res) {
+            if(res.status){
+                option.series[0].data = res.data;
+// 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+      }
+
+      }
+      })
+
+      }
+
+</script>
+{% endblock %}
+</div></body>
+</html>

@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>系谱图</title>
+    <link rel="stylesheet" href="{% static 'animal/css/bootstrap.min.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">系谱图</a>
+    </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/">返回首页</a></li>
+          </ul>
+  </div>
+</nav>
+<div class="panel panel-default">
+  <div class="panel-heading">种猪系谱图</div>
+  <div class="panel-body">
+    <div id="m1" style="width:100%;height:600px;">
+
+    </div>
+</div>
+
+<script src="{% static 'animal/js/bootstrap.min.js'%}"></script>
+
+{% block js %}
+<script src="{% static 'animal/js/echarts.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script type="text/javascript">
+  $(function()  {
+           initGraph();
+      })
+function initGraph(){
+var myChart = echarts.init(document.getElementById('m1'));
+
+         var option = {
+            title: {
+                text: '种猪系谱图',
+                top: '0',
+                left: 'center'
+            },
+            label: {
+                normal: {
+                    show: true
+                }
+            },
+            legend: {
+                x: 'center',
+                show: true,
+                top: '7%',
+                data: ['种公猪', '种母猪']
+            },
+            series: [{
+                type: 'graph',
+                layout: 'force',
+                symbolSize: 50,
+                focusNodeAdjacency: true,
+
+                categories: [{
+                    name: '种公猪',
+                    itemStyle: {
+                        normal: {
+                            color: '#009800',
+                        }
+                    }
+                }, {
+                    name: '种母猪',
+                    itemStyle: {
+                        normal: {
+                            color: '#4592FF',
+                        }
+                    }
+                }],
+                label: {
+                    normal: {
+                        show: true,
+                        textStyle: {
+                            fontSize: 20
+                        },
+                    }
+                },
+                force: {
+                    repulsion: 1000
+                },
+                edgeLabel: {
+                    normal: {
+                        show: true,
+                        textStyle: {
+                            fontSize: 10
+                        },
+                        formatter: '{c}'
+                    }
+                },
+                data: [],
+                links: [
+
+                ],
+                lineStyle: {
+                    normal: {
+                        opacity: 0.9,
+                        width: 3,
+                        curveness: 0
+                    }
+                }
+            }
+
+            ]
+
+  };
+
+$.ajax({
+      url:"/chartgraph/",
+      type:"get",
+      dataType:"JSON",
+      success: function(res) {
+            if(res.status){
+                option.series[0].data = res.data.data_list;
+                option.series[0].links = res.data.links;
+// 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+      }
+
+      }
+      })
+
+      }
+
+
+
+</script>
+
+{% endblock %}
+</div></body>
+</html>

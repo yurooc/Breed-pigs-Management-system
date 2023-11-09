@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加记录</title>
+     <link rel="stylesheet" href="{% static 'animal/css/bootstrap.min.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">添加记录</a>
+    </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/xingweijilu">返回</a></li>
+          </ul>
+  </div>
+</nav>
+<div>
+    <div class="container">
+        <div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">添加</h3>
+  </div>
+  <div class="panel-body">
+  <form class="form-inline" method="post">
+      {% csrf_token %}
+  <div class="form-group">
+    <label>编号</label>
+    <input type="text" class="form-control" name="bianhao" >
+  </div>
+  <div class="form-group">
+    <label>内容</label>
+    <input type="text" class="form-control" name="jiluneirong" >
+  </div>
+  <button type="submit" class="btn btn-default">添加</button>
+</form>
+  </div>
+</div>
+    </div>
+</div>
+<script src="{% static 'js/bootstrap.min.js'%}"></script>
+</body>
+</html>

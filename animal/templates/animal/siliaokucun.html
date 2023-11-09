@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>饲料库存</title>
+     <link rel="stylesheet" href="{% static 'animal/css/bootstrap.min.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">饲料库存</a>
+    </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/">返回首页</a></li>
+          </ul>
+  </div>
+</nav>
+<div>
+    <div class="container">
+        <div style="margin-bottom: 20px">
+            <a class="btn btn-primary" href="/siliaoadd">添加</a>
+        </div>
+       <div class="bs-example" data-example-id="panel-without-body-with-table">
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">饲料库存</div>
+
+      <!-- Table -->
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+              <th>饲料</th>
+              <th>库存(KG)</th>
+              <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for obj in data_list %}
+          <tr>
+            <td>{{obj.sname}}</td>
+            <td>{{obj.kucun}}</td>
+            <td>
+                <a class="btn btn-primary btn-xs" href="/edit/{{ obj.id }}">编辑</a>
+                <a class="btn btn-danger btn-xs" href="/sdelete/?nid={{ obj.id}}">删除</a>
+            </td>
+          </tr>
+{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+    </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">实时库存可视化</div>
+  <div class="panel-body">
+    <div id="m1" style="width:100%;height:300px;"></div>
+</div>
+<script src="{% static 'animal/js/bootstrap.min.js'%}"></script>
+    {% block js %}
+<script src="{% static 'animal/js/echarts.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script type="text/javascript">
+
+
+$(function()  {
+           initPie();
+      })
+       function initPie(){
+var chartDom = document.getElementById('m1');
+var myChart = echarts.init(chartDom);
+var option;
+
+option = {
+  title: {
+    text: '饲料库存可视化',
+    subtext: '实时数据(KG)',
+    left: '0'
+  },
+  tooltip: {
+    trigger: 'item',
+    formatter: '{a} <br/>{b} : {c} ({d}%)'
+  },
+  legend: {
+    left: 'center',
+    top: 'bottom',
+    data: [
+      '麸皮',
+      '蛋白质类',
+      '矿物质类',
+      '维生素类',
+      '大麦',
+      '小麦',
+      '玉米',
+      '油脂'
+    ]
+  },
+  toolbox: {
+    show: true,
+    feature: {
+      mark: { show: true },
+      dataView: { show: false, readOnly: false },
+      restore: { show: false },
+      saveAsImage: { show: false }
+    }
+  },
+  series: [
+    {
+      name: '饲料库存',
+      type: 'pie',
+      radius: [20, 140],
+      center: ['25%', '50%'],
+      roseType: 'radius',
+      itemStyle: {
+        borderRadius: 5
+      },
+      label: {
+        show: false
+      },
+      emphasis: {
+        label: {
+          show: true
+        }
+      },
+      data: [
+
+
+
+
+
+      ]
+    },
+
+  ]
+};
+$.ajax({
+      url:"/chartku/",
+      type:"get",
+      dataType:"JSON",
+      success: function(res) {
+            if(res.status){
+                option.series[0].data = res.data;
+// 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(option);
+      }
+
+      }
+      })
+
+      }
+</script>
+    {% endblock %}
+</div>
+</body>
+</html>
